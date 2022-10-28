@@ -351,23 +351,15 @@ void StartDefaultTask(void const * argument)
   /* USER CODE BEGIN 5 */
 	const portTickType freq_button_sleep = 1000;
 	portTickType lastRun;
+	lastRun = xTaskGetTickCount();
 	/* Infinite loop */
 	for(;;)
 	{
-		lastRun = xTaskGetTickCount();
-
 		if(button_press > 0)
 		{
-			vTaskDelayUntil(&lastRun, freq_button_sleep);
+			vTaskDelay(freq_button_sleep);
 			vTaskResume(Int_ButHandle);
 		}
-		//		osDelay(3000);
-		//		state = 1;
-		//		osDelay(3000);
-		//		state = 0;
-		//		mode = 1;
-		//		osDelay(3000);
-		//		mode = 0;
 	}
   /* USER CODE END 5 */
 }
@@ -443,7 +435,7 @@ void StartInt_But(void const * argument)
 	for(;;)
 	{
 		vTaskSuspend(NULL);
-		if((xTaskGetTickCount() - lastRun) > 1000)
+		if((xTaskGetTickCount() - lastRun) > 750)
 		{
 			if(button_press == 0)
 			{
@@ -456,9 +448,13 @@ void StartInt_But(void const * argument)
 				state = !state;
 				button_press = 0;
 			}
-			else if(button_press == 2)
+			else if(button_press == 2 && state == 0)
 			{
 				mode = !mode;
+				button_press = 0;
+			}
+			else
+			{
 				button_press = 0;
 			}
 		}
