@@ -45,7 +45,18 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
  ../Middlewares/Third_Party/FreeRTOS/Source/include/semphr.h \
  ../Middlewares/Third_Party/FreeRTOS/Source/include/queue.h \
  ../Middlewares/Third_Party/FreeRTOS/Source/include/event_groups.h \
- ../Middlewares/Third_Party/FreeRTOS/Source/include/timers.h
+ ../Middlewares/Third_Party/FreeRTOS/Source/include/timers.h \
+ ../Core/Src/sensorIO.h \
+ ../Core/Src/../../Drivers/BSP/B-L475E-IOT01/stm32l475e_iot01_accelero.h \
+ ../Core/Src/../../Drivers/BSP/B-L475E-IOT01/stm32l475e_iot01.h \
+ ../Core/Src/../../Drivers/BSP/B-L475E-IOT01/../Components/lsm6dsl/lsm6dsl.h \
+ ../Core/Src/../../Drivers/BSP/B-L475E-IOT01/../Components/lsm6dsl/../Common/accelero.h \
+ ../Core/Src/../../Drivers/BSP/B-L475E-IOT01/../Components/lsm6dsl/../Common/gyro.h \
+ ../Core/Src/../../Drivers/BSP/B-L475E-IOT01/stm32l475e_iot01_tsensor.h \
+ ../Core/Src/../../Drivers/BSP/B-L475E-IOT01/../Components/hts221/hts221.h \
+ ../Core/Src/../../Drivers/BSP/B-L475E-IOT01/../Components/hts221/../Common/hsensor.h \
+ ../Core/Src/../../Drivers/BSP/B-L475E-IOT01/../Components/hts221/../Common/tsensor.h \
+ ../Core/Src/../../Drivers/BSP/B-L475E-IOT01/stm32l475e_iot01.h
 ../Core/Inc/main.h:
 ../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal.h:
 ../Core/Inc/stm32l4xx_hal_conf.h:
@@ -94,3 +105,14 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
 ../Middlewares/Third_Party/FreeRTOS/Source/include/queue.h:
 ../Middlewares/Third_Party/FreeRTOS/Source/include/event_groups.h:
 ../Middlewares/Third_Party/FreeRTOS/Source/include/timers.h:
+../Core/Src/sensorIO.h:
+../Core/Src/../../Drivers/BSP/B-L475E-IOT01/stm32l475e_iot01_accelero.h:
+../Core/Src/../../Drivers/BSP/B-L475E-IOT01/stm32l475e_iot01.h:
+../Core/Src/../../Drivers/BSP/B-L475E-IOT01/../Components/lsm6dsl/lsm6dsl.h:
+../Core/Src/../../Drivers/BSP/B-L475E-IOT01/../Components/lsm6dsl/../Common/accelero.h:
+../Core/Src/../../Drivers/BSP/B-L475E-IOT01/../Components/lsm6dsl/../Common/gyro.h:
+../Core/Src/../../Drivers/BSP/B-L475E-IOT01/stm32l475e_iot01_tsensor.h:
+../Core/Src/../../Drivers/BSP/B-L475E-IOT01/../Components/hts221/hts221.h:
+../Core/Src/../../Drivers/BSP/B-L475E-IOT01/../Components/hts221/../Common/hsensor.h:
+../Core/Src/../../Drivers/BSP/B-L475E-IOT01/../Components/hts221/../Common/tsensor.h:
+../Core/Src/../../Drivers/BSP/B-L475E-IOT01/stm32l475e_iot01.h:

@@ -22,7 +22,9 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "sensorIO.h"
+#include "stdio.h"
+#include "string.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -350,8 +352,6 @@ void StartDefaultTask(void const * argument)
 {
   /* USER CODE BEGIN 5 */
 	const portTickType freq_button_sleep = 1000;
-	portTickType lastRun;
-	lastRun = xTaskGetTickCount();
 	/* Infinite loop */
 	for(;;)
 	{
@@ -360,6 +360,7 @@ void StartDefaultTask(void const * argument)
 			vTaskDelay(freq_button_sleep);
 			vTaskResume(Int_ButHandle);
 		}
+		vTaskSuspend(NULL);
 	}
   /* USER CODE END 5 */
 }
@@ -410,11 +411,25 @@ void StartBlinkLed(void const * argument)
 void Start_RnT_Sensor(void const * argument)
 {
   /* USER CODE BEGIN Start_RnT_Sensor */
+	char message_print[64];
+	float accel_data[3];
+	float temp_data[1];
 	/* Infinite loop */
 	for(;;)
 	{
+		if(mode == 0 && state == 0)
+		{
+			continue;
+		}
+		else if(mode == 1 && state == 0)
+		{
+			Read_Acc(accel_data);
+			Read_Temp(temp_data);
 
-		osDelay(1);
+			sprintf(message_print, "T:2.2%f (°C),A:2.2%f (m/s^2)\r\n", temp_data[0], accel_data[2]);
+
+		}
+		HAL_UART_Transmit(&huart1, (uint8_t*)message_print, strlen(message_print), 0xFFFF);
 	}
   /* USER CODE END Start_RnT_Sensor */
 }

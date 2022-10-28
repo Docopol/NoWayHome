@@ -14,6 +14,13 @@ RM := rm -rf
 -include Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS/subdir.mk
 -include Middlewares/Third_Party/FreeRTOS/Source/subdir.mk
 -include Drivers/STM32L4xx_HAL_Driver/Src/subdir.mk
+-include Drivers/BSP/Components/lsm6dsl/subdir.mk
+-include Drivers/BSP/Components/lps22hb/subdir.mk
+-include Drivers/BSP/Components/lis3mdl/subdir.mk
+-include Drivers/BSP/Components/hts221/subdir.mk
+-include Drivers/BSP/Components/es_wifi/subdir.mk
+-include Drivers/BSP/Components/M24SR/subdir.mk
+-include Drivers/BSP/B-L475E-IOT01/subdir.mk
 -include Core/Startup/subdir.mk
 -include Core/Src/subdir.mk
 -include objects.mk
@@ -65,7 +72,7 @@ main-build: NoWayHome.elf secondary-outputs
 
 # Tool invocations
 NoWayHome.elf NoWayHome.map: $(OBJS) $(USER_OBJS) C:\Users\docop\Documents\NUS\EE2028-STM32\NoWayHome\STM32L475VGTX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "NoWayHome.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"C:\Users\docop\Documents\NUS\EE2028-STM32\NoWayHome\STM32L475VGTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="NoWayHome.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+	arm-none-eabi-gcc -o "NoWayHome.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"C:\Users\docop\Documents\NUS\EE2028-STM32\NoWayHome\STM32L475VGTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="NoWayHome.map" -Wl,--gc-sections -static -u _printf_float --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 

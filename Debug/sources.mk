@@ -23,6 +23,13 @@ C_DEPS :=
 SUBDIRS := \
 Core/Src \
 Core/Startup \
+Drivers/BSP/B-L475E-IOT01 \
+Drivers/BSP/Components/M24SR \
+Drivers/BSP/Components/es_wifi \
+Drivers/BSP/Components/hts221 \
+Drivers/BSP/Components/lis3mdl \
+Drivers/BSP/Components/lps22hb \
+Drivers/BSP/Components/lsm6dsl \
 Drivers/STM32L4xx_HAL_Driver/Src \
 Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS \
 Middlewares/Third_Party/FreeRTOS/Source \
