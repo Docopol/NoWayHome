@@ -47,9 +47,13 @@ UART_HandleTypeDef huart1;
 osThreadId defaultTaskHandle;
 osThreadId BlinkLedHandle;
 osThreadId RnT_SensorHandle;
+osThreadId Int_ButHandle;
 /* USER CODE BEGIN PV */
-extern int mode = 0; // 0 corresponds to exploration and 1 to battle
-extern int state = 0; // 0 corresponds to normal and 1 to warning
+int mode = 0; // 0 corresponds to exploration and 1 to battle
+int state = 0; // 0 corresponds to normal and 1 to warning
+int button_press = 0; //1 means button has been pressed
+
+TaskHandle_t Int_ButHandle = NULL;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -60,6 +64,7 @@ static void MX_USART1_UART_Init(void);
 void StartDefaultTask(void const * argument);
 void StartBlinkLed(void const * argument);
 void Start_RnT_Sensor(void const * argument);
+void StartInt_But(void const * argument);
 
 /* USER CODE BEGIN PFP */
 
@@ -133,6 +138,10 @@ int main(void)
   osThreadDef(RnT_Sensor, Start_RnT_Sensor, osPriorityBelowNormal, 0, 128);
   RnT_SensorHandle = osThreadCreate(osThread(RnT_Sensor), NULL);
 
+  /* definition and creation of Int_But */
+  osThreadDef(Int_But, StartInt_But, osPriorityAboveNormal, 0, 128);
+  Int_ButHandle = osThreadCreate(osThread(Int_But), NULL);
+
   /* USER CODE BEGIN RTOS_THREADS */
 	/* add threads, ... */
   /* USER CODE END RTOS_THREADS */
@@ -168,10 +177,16 @@ void SystemClock_Config(void)
     Error_Handler();
   }
 
+  /** Configure LSE Drive Capability
+  */
+  HAL_PWR_EnableBkUpAccess();
+  __HAL_RCC_LSEDRIVE_CONFIG(RCC_LSEDRIVE_LOW);
+
   /** Initializes the RCC Oscillators according to the specified parameters
   * in the RCC_OscInitTypeDef structure.
   */
-  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_MSI;
+  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_LSE|RCC_OSCILLATORTYPE_MSI;
+  RCC_OscInitStruct.LSEState = RCC_LSE_ON;
   RCC_OscInitStruct.MSIState = RCC_MSI_ON;
   RCC_OscInitStruct.MSICalibrationValue = 0;
   RCC_OscInitStruct.MSIClockRange = RCC_MSIRANGE_6;
@@ -194,6 +209,10 @@ void SystemClock_Config(void)
   {
     Error_Handler();
   }
+
+  /** Enable MSI Auto calibration
+  */
+  HAL_RCCEx_EnableMSIPLLMode();
 }
 
 /**
@@ -290,17 +309,18 @@ static void MX_GPIO_Init(void)
 
   /* GPIO Ports Clock Enable */
   __HAL_RCC_GPIOC_CLK_ENABLE();
+  __HAL_RCC_GPIOH_CLK_ENABLE();
   __HAL_RCC_GPIOB_CLK_ENABLE();
   __HAL_RCC_GPIOA_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, GPIO_PIN_RESET);
 
-  /*Configure GPIO pin : BLUE_BUTTON_Pin */
-  GPIO_InitStruct.Pin = BLUE_BUTTON_Pin;
+  /*Configure GPIO pin : PC13 */
+  GPIO_InitStruct.Pin = GPIO_PIN_13;
   GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
-  HAL_GPIO_Init(BLUE_BUTTON_GPIO_Port, &GPIO_InitStruct);
+  HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
   /*Configure GPIO pin : LED_Pin */
   GPIO_InitStruct.Pin = LED_Pin;
@@ -308,6 +328,10 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(LED_GPIO_Port, &GPIO_InitStruct);
+
+  /* EXTI interrupt init*/
+  HAL_NVIC_SetPriority(EXTI15_10_IRQn, 5, 0);
+  HAL_NVIC_EnableIRQ(EXTI15_10_IRQn);
 
 }
 
@@ -325,16 +349,25 @@ static void MX_GPIO_Init(void)
 void StartDefaultTask(void const * argument)
 {
   /* USER CODE BEGIN 5 */
+	const portTickType freq_button_sleep = 1000;
+	portTickType lastRun;
 	/* Infinite loop */
 	for(;;)
 	{
-		osDelay(3000);
-		state = 1;
-		osDelay(3000);
-		state = 0;
-		mode = 1;
-		osDelay(3000);
-		mode = 0;
+		lastRun = xTaskGetTickCount();
+
+		if(button_press > 0)
+		{
+			vTaskDelayUntil(&lastRun, freq_button_sleep);
+			vTaskResume(Int_ButHandle);
+		}
+		//		osDelay(3000);
+		//		state = 1;
+		//		osDelay(3000);
+		//		state = 0;
+		//		mode = 1;
+		//		osDelay(3000);
+		//		mode = 0;
 	}
   /* USER CODE END 5 */
 }
@@ -356,7 +389,7 @@ void StartBlinkLed(void const * argument)
 	/* Infinite loop */
 	for(;;)
 	{
-		if(mode == 1)
+		if(mode == 1 && state == 0)
 		{
 			HAL_GPIO_TogglePin(GPIOB, LED_Pin);
 			vTaskDelayUntil(&lastRun,frequency_battle);
@@ -377,21 +410,65 @@ void StartBlinkLed(void const * argument)
 
 /* USER CODE BEGIN Header_Start_RnT_Sensor */
 /**
-* @brief Function implementing the RnT_Sensor thread.
-* @param argument: Not used
-* @retval None
-*/
+ * @brief Function implementing the RnT_Sensor thread.
+ * @param argument: Not used
+ * @retval None
+ */
 /* USER CODE END Header_Start_RnT_Sensor */
 void Start_RnT_Sensor(void const * argument)
 {
-	/* USER CODE BEGIN Start_RnT_Sensor */
+  /* USER CODE BEGIN Start_RnT_Sensor */
 	/* Infinite loop */
 	for(;;)
 	{
 
 		osDelay(1);
 	}
-	/* USER CODE END Start_RnT_Sensor */
+  /* USER CODE END Start_RnT_Sensor */
+}
+
+/* USER CODE BEGIN Header_StartInt_But */
+/**
+ * @brief Function implementing the Int_But thread.
+ * @param argument: Not used
+ * @retval None
+ */
+/* USER CODE END Header_StartInt_But */
+void StartInt_But(void const * argument)
+{
+  /* USER CODE BEGIN StartInt_But */
+	portTickType lastRun;
+	lastRun = 0;
+	/* Infinite loop */
+	for(;;)
+	{
+		vTaskSuspend(NULL);
+		if((xTaskGetTickCount() - lastRun) > 1000)
+		{
+			if(button_press == 0)
+			{
+				button_press = 1;
+				lastRun = xTaskGetTickCount();
+				vTaskResume(defaultTaskHandle);
+			}
+			else if(button_press == 1)
+			{
+				state = !state;
+				button_press = 0;
+			}
+			else if(button_press == 2)
+			{
+				mode = !mode;
+				button_press = 0;
+			}
+		}
+		else
+		{
+			button_press += 1;
+
+		}
+	}
+  /* USER CODE END StartInt_But */
 }
 
 /**
