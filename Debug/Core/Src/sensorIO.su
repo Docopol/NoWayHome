@@ -1,2 +1,6 @@
 ../Core/Src/sensorIO.c:10:6:Read_Acc	24	static
 ../Core/Src/sensorIO.c:21:6:Read_Temp	16	static
+../Core/Src/sensorIO.c:27:6:Read_Mag	24	static
+../Core/Src/sensorIO.c:38:6:Read_Gyro	24	static
+../Core/Src/sensorIO.c:49:6:Read_Hum	16	static
+../Core/Src/sensorIO.c:54:6:Read_Pres	16	static
