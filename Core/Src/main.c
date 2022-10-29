@@ -56,7 +56,6 @@ int state = 0; // 0 corresponds to normal and 1 to warning
 int button_press = 0; //1 means button has been pressed
 
 TaskHandle_t Int_ButHandle = NULL;
-SemaphoreHandle_t SimpleMutex;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -70,17 +69,17 @@ void Start_RnT_Sensor(void const * argument);
 void StartInt_But(void const * argument);
 
 /* USER CODE BEGIN PFP */
-#ifdef __GNUC__
-#define PUTCHAR_PROTOTYPE int __io_putchar(int ch)
-#else
-#define PUTCHAR_PROTOTYPE int fputc(int ch, FILE *f)
-#endif
-
-PUTCHAR_PROTOTYPE
-{
-  HAL_UART_Transmit(&huart1, (uint8_t *)&ch, 1, HAL_MAX_DELAY);
-  return ch;
-}
+//#ifdef __GNUC__
+//#define PUTCHAR_PROTOTYPE int __io_putchar(int ch)
+//#else
+//#define PUTCHAR_PROTOTYPE int fputc(int ch, FILE *f)
+//#endif
+//
+//PUTCHAR_PROTOTYPE
+//{
+//  HAL_UART_Transmit(&huart1, (uint8_t *)&ch, 1, HAL_MAX_DELAY);
+//  return ch;
+//}
 
 /* USER CODE END PFP */
 
@@ -126,7 +125,6 @@ int main(void)
 
   /* USER CODE BEGIN RTOS_MUTEX */
 	/* add mutexes, ... */
-	SimpleMutex = xSemaphoreCreateMutex();
   /* USER CODE END RTOS_MUTEX */
 
   /* USER CODE BEGIN RTOS_SEMAPHORES */
@@ -151,7 +149,7 @@ int main(void)
   BlinkLedHandle = osThreadCreate(osThread(BlinkLed), NULL);
 
   /* definition and creation of RnT_Sensor */
-  osThreadDef(RnT_Sensor, Start_RnT_Sensor, osPriorityBelowNormal, 0, 128);
+  osThreadDef(RnT_Sensor, Start_RnT_Sensor, osPriorityBelowNormal, 0, 256);
   RnT_SensorHandle = osThreadCreate(osThread(RnT_Sensor), NULL);
 
   /* definition and creation of Int_But */
@@ -405,22 +403,18 @@ void StartBlinkLed(void const * argument)
 	{
 		if(mode == 1 && state == 0)
 		{
-			xSemaphoreTake(SimpleMutex, portMAX_DELAY);
 			HAL_GPIO_TogglePin(GPIOB, LED_Pin);
-			xSemaphoreGive(SimpleMutex);
 			vTaskDelayUntil(&lastRun,frequency_battle);
 		}
 		else if(state == 1)
 		{
-//			xSemaphoreTake(SimpleMutex, portMAX_DELAY);
 			HAL_GPIO_TogglePin(GPIOB, LED_Pin);
-
 			vTaskDelayUntil(&lastRun,frequency_warning);
 		}
 		else
 		{
 			HAL_GPIO_WritePin(GPIOB, LED_Pin, GPIO_PIN_SET);
-//			vTaskDelayUntil(&lastRun,frequency_warning);
+			vTaskDelay(1000);
 		}
 
 	}
@@ -438,8 +432,8 @@ void Start_RnT_Sensor(void const * argument)
 {
   /* USER CODE BEGIN Start_RnT_Sensor */
 	portTickType lastRun;
-	const portTickType frequency_transmit = 4000;
-
+	const portTickType frequency_transmit = 1000;
+	char message_print[64];
 	float accel_data[3];
 	float temp_data[1];
 	/* Infinite loop */
@@ -453,14 +447,10 @@ void Start_RnT_Sensor(void const * argument)
 		{
 			Read_Acc(accel_data);
 			Read_Temp(temp_data);
-//			accel_data[2] = 0;
-//			temp_data[0] = 0;
 
-			xSemaphoreTake(SimpleMutex, portMAX_DELAY);
-			printf("T:%2.2f (°C),A:%2.2f (m/s^2)\r\n", temp_data[0], accel_data[2]);
-			xSemaphoreGive(SimpleMutex);
+			sprintf(message_print, "T:%2.2f (°C),A:%2.2f (m/s^2)\r\n", temp_data[0], accel_data[2]);
+			HAL_UART_Transmit(&huart1, (uint8_t*)message_print, strlen(message_print), 0xFFFF);
 			vTaskDelayUntil(&lastRun,frequency_transmit);
-//			vTaskDelay(frequency_transmit);
 		}
 	}
   /* USER CODE END Start_RnT_Sensor */
