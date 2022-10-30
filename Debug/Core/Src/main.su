@@ -5,7 +5,7 @@
 ../Core/Src/main.c:331:13:MX_GPIO_Init	48	static
 ../Core/Src/main.c:374:6:StartDefaultTask	24	static
 ../Core/Src/main.c:398:6:StartBlinkLed	32	static
-../Core/Src/main.c:435:6:Start_RnT_Sensor	120	static
-../Core/Src/main.c:470:6:StartInt_But	24	static
-../Core/Src/main.c:519:6:HAL_TIM_PeriodElapsedCallback	16	static
-../Core/Src/main.c:536:6:Error_Handler	4	static,ignoring_inline_asm
+../Core/Src/main.c:435:6:Start_RnT_Sensor	312	static
+../Core/Src/main.c:492:6:StartInt_But	24	static
+../Core/Src/main.c:541:6:HAL_TIM_PeriodElapsedCallback	16	static
+../Core/Src/main.c:558:6:Error_Handler	4	static,ignoring_inline_asm
