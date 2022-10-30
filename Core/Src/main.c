@@ -438,7 +438,7 @@ void Start_RnT_Sensor(void const * argument)
 	portTickType lastRun;
 	const portTickType frequency_transmit = 1000;
 
-	char message_exploration[64];
+	char message_exploration[90];
 	char message_battle1[64];
 	char message_battle2[64];
 	float accel_data[3];
@@ -458,7 +458,7 @@ void Start_RnT_Sensor(void const * argument)
 			Read_Pres(pres_data);
 			Read_Hum(hum_data);
 			gyro_data[2] = 0;
-			sprintf(message_exploration, "G: %2.2f(deg/s), M: %2.2f (g),  P: %2.2f (hPa), H: %2.2f (%%rH), \r\nFluxer's battery is 0 %%\r\n", gyro_data[2], mag_data[2], pres_data[0], hum_data[0]);
+			sprintf(message_exploration, "G: %2.2f(deg/s), M: %2.2f (g),  P: %2.2f (hPa), H: %2.2f (%%rH)\r\n", gyro_data[2], mag_data[2], pres_data[0], hum_data[0]);
 			HAL_UART_Transmit(&huart1, (uint8_t*)message_exploration, strlen(message_exploration), 0xFFFF);
 			vTaskDelayUntil(&lastRun,frequency_transmit);
 
