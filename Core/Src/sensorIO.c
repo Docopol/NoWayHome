@@ -37,7 +37,7 @@ void Read_Mag(float *mag_data)
 
 void Read_Gyro(float *gyro_data)
 {
-	int16_t gyro_data_i16[3] = { 0 };
+	float gyro_data_i16[3] = { 0 };
 	BSP_GYRO_GetXYZ(gyro_data_i16);
 	gyro_data[0] = (float)gyro_data_i16[0] / 100.0f;
 	gyro_data[1] = (float)gyro_data_i16[1] / 100.0f;

@@ -25,6 +25,7 @@
 #include "sensorIO.h"
 #include "stdio.h"
 #include "string.h"
+#include "helper.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -448,35 +449,47 @@ void Start_RnT_Sensor(void const * argument)
 	float pres_data[1];
 	float hum_data[1];
 
+	int threshold_status[6] = {0};
+	float threshold_values[6] = {20, 1000, 99, 100, 10235, 4};
+
 	/* Infinite loop */
 	for(;;)
 	{
 		if(mode == 0 && state == 0)
 		{
-//			Read_Gyro(gyro_data);
-			Read_Mag(mag_data);
-			Read_Pres(pres_data);
+			Read_Gyro(gyro_data);
 			Read_Hum(hum_data);
-			gyro_data[2] = 0;
+			Read_Mag(mag_data);
+			Read_Temp(temp_data);
+
 			sprintf(message_exploration, "G: %2.2f(deg/s), M: %2.2f (g),  P: %2.2f (hPa), H: %2.2f (%%rH)\r\n", gyro_data[2], mag_data[2], pres_data[0], hum_data[0]);
 			HAL_UART_Transmit(&huart1, (uint8_t*)message_exploration, strlen(message_exploration), 0xFFFF);
+
+//			Check_Threshold(, threshold_values, threshold_status);
+
+//			if()
+
 			vTaskDelayUntil(&lastRun,frequency_transmit);
 
 		}
 		else if(mode == 1 && state == 0)
 		{
 			Read_Acc(accel_data);
-			Read_Mag(mag_data);
-			Read_Temp(temp_data);
-//			Read_Gyro(gyro_data);
-			Read_Pres(pres_data);
+			Read_Gyro(gyro_data);
 			Read_Hum(hum_data);
-			gyro_data[2] =0;
+			Read_Mag(mag_data);
+			Read_Pres(pres_data);
+			Read_Temp(temp_data);
+
 			sprintf(message_battle1, "T:%2.2f (deg C), P: %2.2f (hPa), H: %2.2f (%%rH), ", temp_data[0],  pres_data[0],  hum_data[0]);
 			HAL_UART_Transmit(&huart1, (uint8_t*)message_battle1, strlen(message_battle1), 0xFFFF);
 			sprintf(message_battle2, "A: %2.2f (m/s^2), G: %2.2f(deg/s), M: %2.2f (g)\r\n", accel_data[2], gyro_data[2], mag_data[2]);
 			HAL_UART_Transmit(&huart1, (uint8_t*)message_battle2, strlen(message_battle2), 0xFFFF);
 			vTaskDelayUntil(&lastRun,frequency_transmit);
+		}
+		else
+		{
+
 		}
 	}
   /* USER CODE END Start_RnT_Sensor */
