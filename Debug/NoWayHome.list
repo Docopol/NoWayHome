@@ -27,9 +27,9 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   ALLOC
  11 .ARM.attributes 00000030  00000000  00000000  000202a8  2**0
                   CONTENTS, READONLY
- 12 .debug_info   00020043  00000000  00000000  000202d8  2**0
+ 12 .debug_info   00020044  00000000  00000000  000202d8  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 13 .debug_abbrev 0000486a  00000000  00000000  0004031b  2**0
+ 13 .debug_abbrev 0000486a  00000000  00000000  0004031c  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
  14 .debug_aranges 00001b70  00000000  00000000  00044b88  2**3
                   CONTENTS, READONLY, DEBUGGING, OCTETS
@@ -2142,7 +2142,7 @@ void Start_RnT_Sensor(void const * argument)
  8001460:	f5a3 73b8 	sub.w	r3, r3, #368	; 0x170
  8001464:	2200      	movs	r2, #0
  8001466:	601a      	str	r2, [r3, #0]
-	float threshold_values[6] = {20, 500, 99, 15, 1010, 35};
+	float threshold_values[6] = {20, 500, 99, 15, 1013, 35};
  8001468:	f507 73e0 	add.w	r3, r7, #448	; 0x1c0
  800146c:	f5a3 73c4 	sub.w	r3, r3, #392	; 0x188
  8001470:	4a63      	ldr	r2, [pc, #396]	; (8001600 <Start_RnT_Sensor+0x1e0>)
@@ -2816,7 +2816,7 @@ void StartMode_Init(void const * argument)
  8001a20:	2b00      	cmp	r3, #0
  8001a22:	d106      	bne.n	8001a32 <StartMode_Init+0x1e>
 		{
-			sprintf(message_start, "Entering exploration mode");
+			sprintf(message_start, "Entering exploration mode\r\n");
  8001a24:	f107 0308 	add.w	r3, r7, #8
  8001a28:	4911      	ldr	r1, [pc, #68]	; (8001a70 <StartMode_Init+0x5c>)
  8001a2a:	4618      	mov	r0, r3
@@ -2829,7 +2829,7 @@ void StartMode_Init(void const * argument)
  8001a36:	2b01      	cmp	r3, #1
  8001a38:	d105      	bne.n	8001a46 <StartMode_Init+0x32>
 		{
-			sprintf(message_start, "Entering battle mode");
+			sprintf(message_start, "Entering battle mode\r\n");
  8001a3a:	f107 0308 	add.w	r3, r7, #8
  8001a3e:	490d      	ldr	r1, [pc, #52]	; (8001a74 <StartMode_Init+0x60>)
  8001a40:	4618      	mov	r0, r3

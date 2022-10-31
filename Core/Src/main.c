@@ -3,6 +3,7 @@
  ******************************************************************************
  * @file           : main.c
  * @brief          : Main program body
+ * @authors		   : Dominic Olimid (A0261190M) Ghaith Ghadri (A0260730N)
  ******************************************************************************
  * @attention
  *
@@ -468,7 +469,7 @@ void Start_RnT_Sensor(void const * argument)
 
 	int threshold_status[6] = {0};
 	int nb_exceeded[1] = {0};
-	float threshold_values[6] = {20, 500, 99, 15, 1010, 35};
+	float threshold_values[6] = {20, 500, 99, 15, 1013, 35};
 
 	/* Infinite loop */
 	for(;;)
