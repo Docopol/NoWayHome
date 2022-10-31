@@ -65,7 +65,8 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
  ../Core/Src/../../Drivers/BSP/B-L475E-IOT01/../Components/lps22hb/lps22hb.h \
  ../Core/Src/../../Drivers/BSP/B-L475E-IOT01/../Components/lps22hb/../Common/psensor.h \
  ../Core/Src/../../Drivers/BSP/B-L475E-IOT01/../Components/lps22hb/../Common/tsensor.h \
- ../Core/Src/../../Drivers/BSP/B-L475E-IOT01/stm32l475e_iot01.h
+ ../Core/Src/../../Drivers/BSP/B-L475E-IOT01/stm32l475e_iot01.h \
+ ../Core/Src/helper.h
 ../Core/Inc/main.h:
 ../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal.h:
 ../Core/Inc/stm32l4xx_hal_conf.h:
@@ -134,3 +135,4 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
 ../Core/Src/../../Drivers/BSP/B-L475E-IOT01/../Components/lps22hb/../Common/psensor.h:
 ../Core/Src/../../Drivers/BSP/B-L475E-IOT01/../Components/lps22hb/../Common/tsensor.h:
 ../Core/Src/../../Drivers/BSP/B-L475E-IOT01/stm32l475e_iot01.h:
+../Core/Src/helper.h:

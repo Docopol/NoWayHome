@@ -442,6 +442,8 @@ void Start_RnT_Sensor(void const * argument)
 	char message_exploration[90];
 	char message_battle1[64];
 	char message_battle2[64];
+	char message_warning[32];
+
 	float accel_data[3];
 	float mag_data[3];
 	float gyro_data[3];
@@ -450,7 +452,8 @@ void Start_RnT_Sensor(void const * argument)
 	float hum_data[1];
 
 	int threshold_status[6] = {0};
-	float threshold_values[6] = {20, 1000, 99, 100, 10235, 4};
+	int nb_exceeded[1] = {0};
+	float threshold_values[6] = {20, 500, 99, 15, 1010, 35};
 
 	/* Infinite loop */
 	for(;;)
@@ -460,14 +463,20 @@ void Start_RnT_Sensor(void const * argument)
 			Read_Gyro(gyro_data);
 			Read_Hum(hum_data);
 			Read_Mag(mag_data);
-			Read_Temp(temp_data);
+			Read_Pres(pres_data);
 
 			sprintf(message_exploration, "G: %2.2f(deg/s), M: %2.2f (g),  P: %2.2f (hPa), H: %2.2f (%%rH)\r\n", gyro_data[2], mag_data[2], pres_data[0], hum_data[0]);
-			HAL_UART_Transmit(&huart1, (uint8_t*)message_exploration, strlen(message_exploration), 0xFFFF);
+			HAL_UART_Transmit(&huart1, (uint8_t*)message_exploration, strlen(message_exploration), 0xFF);
 
-//			Check_Threshold(, threshold_values, threshold_status);
+			float sensor_reading[6] = {0, gyro_data[2], hum_data[0], mag_data[2], pres_data[0], 0};
+			Check_Threshold(nb_exceeded, sensor_reading, threshold_values, threshold_status);
 
-//			if()
+			if(nb_exceeded[0] >= 2)
+			{
+				state = 1;
+				nb_exceeded[0]=0;
+				memset(threshold_status, 0, sizeof(threshold_status));
+			}
 
 			vTaskDelayUntil(&lastRun,frequency_transmit);
 
@@ -486,10 +495,30 @@ void Start_RnT_Sensor(void const * argument)
 			sprintf(message_battle2, "A: %2.2f (m/s^2), G: %2.2f(deg/s), M: %2.2f (g)\r\n", accel_data[2], gyro_data[2], mag_data[2]);
 			HAL_UART_Transmit(&huart1, (uint8_t*)message_battle2, strlen(message_battle2), 0xFFFF);
 			vTaskDelayUntil(&lastRun,frequency_transmit);
+
+			float sensor_reading[6] = {accel_data[2], gyro_data[2], hum_data[0], mag_data[2], pres_data[0], temp_data[0]};
+			Check_Threshold(nb_exceeded, sensor_reading, threshold_values, threshold_status);
+
+			if(nb_exceeded[0] >= 1)
+			{
+				state = 1;
+				nb_exceeded[0]=0;
+				memset(threshold_status, 0, sizeof(threshold_status));
+			}
 		}
 		else
 		{
+			if(mode == 0)
+			{
+				sprintf(message_warning, "WARNING mode: SOS\r\n");
+			}
+			else
+			{
+				sprintf(message_warning, "BATTLE mode: SOS\r\n");
+			}
 
+			HAL_UART_Transmit(&huart1, (uint8_t*)message_warning, strlen(message_warning), 0xFFFF);
+			vTaskDelayUntil(&lastRun,frequency_transmit);
 		}
 	}
   /* USER CODE END Start_RnT_Sensor */
@@ -519,9 +548,9 @@ void StartInt_But(void const * argument)
 				lastRun = xTaskGetTickCount();
 				vTaskResume(defaultTaskHandle);
 			}
-			else if(button_press == 1)
+			else if(button_press == 1 && state == 1)
 			{
-				state = !state;
+				state = 0;
 				button_press = 0;
 			}
 			else if(button_press == 2 && state == 0)
