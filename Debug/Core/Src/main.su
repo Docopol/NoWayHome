@@ -5,7 +5,7 @@
 ../Core/Src/main.c:346:13:MX_GPIO_Init	48	static
 ../Core/Src/main.c:389:6:StartDefaultTask	24	static
 ../Core/Src/main.c:413:6:StartBlinkLed	32	static
-../Core/Src/main.c:450:6:Start_RnT_Sensor	504	static
+../Core/Src/main.c:450:6:Start_RnT_Sensor	552	static
 ../Core/Src/main.c:553:6:StartInt_But	24	static
 ../Core/Src/main.c:605:6:StartFire_Fluxer	64	static
 ../Core/Src/main.c:635:6:StartMode_Init	48	static

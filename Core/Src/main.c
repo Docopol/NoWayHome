@@ -389,7 +389,7 @@ static void MX_GPIO_Init(void)
 void StartDefaultTask(void const * argument)
 {
 	/* USER CODE BEGIN 5 */
-	const portTickType freq_button_sleep = 700;
+	const portTickType freq_button_sleep = 1200;
 	/* Infinite loop */
 	for(;;)
 	{
@@ -456,7 +456,7 @@ void Start_RnT_Sensor(void const * argument)
 
 	char message_exploration[90];
 	char message_battle1[64];
-	char message_battle2[64];
+	char message_battle2[90];
 	char message_warning[32];
 	char message_battery[32];
 
@@ -469,7 +469,7 @@ void Start_RnT_Sensor(void const * argument)
 
 	int threshold_status[6] = {0};
 	int nb_exceeded[1] = {0};
-	float threshold_values[6] = {20, 500, 99, 15, 1013, 35};
+	float threshold_values[6] = {20, 500, 100, 15, 1013, 35};
 
 	/* Infinite loop */
 	for(;;)
@@ -481,7 +481,7 @@ void Start_RnT_Sensor(void const * argument)
 			Read_Mag(mag_data);
 			Read_Pres(pres_data);
 
-			sprintf(message_exploration, "G: %2.2f(deg/s), M: %2.2f (g),  P: %2.2f (hPa), H: %2.2f (%%rH)\r\n", gyro_data[2], mag_data[2], pres_data[0], hum_data[0]);
+			sprintf(message_exploration, "Gz: %2.2f(deg/s), Mx: %2.2f (g), My: %2.2f (g), P: %2.2f (hPa), H: %2.2f (%%rH)\r\n", gyro_data[2], mag_data[0], mag_data[1], pres_data[0], hum_data[0]);
 			HAL_UART_Transmit(&huart1, (uint8_t*)message_exploration, strlen(message_exploration), 0xFF);
 
 			float sensor_reading[6] = {0, gyro_data[2], hum_data[0], mag_data[2], pres_data[0], 0};
@@ -508,7 +508,7 @@ void Start_RnT_Sensor(void const * argument)
 
 			sprintf(message_battle1, "T:%2.2f (deg C), P: %2.2f (hPa), H: %2.2f (%%rH), ", temp_data[0],  pres_data[0],  hum_data[0]);
 			HAL_UART_Transmit(&huart1, (uint8_t*)message_battle1, strlen(message_battle1), 0xFFFF);
-			sprintf(message_battle2, "A: %2.2f (m/s^2), G: %2.2f(deg/s), M: %2.2f (g)\r", accel_data[2], gyro_data[2], mag_data[2]);
+			sprintf(message_battle2, "Az: %2.2f (m/s^2), Gz: %2.2f(deg/s), Mx: %2.2f (g), My: %2.2f (g)\r", accel_data[2], gyro_data[2], mag_data[0], mag_data[1]);
 			HAL_UART_Transmit(&huart1, (uint8_t*)message_battle2, strlen(message_battle2), 0xFFFF);
 			sprintf(message_battery, "Battery level: %d/10\r\n", battery_level);
 			HAL_UART_Transmit(&huart1, (uint8_t*)message_battery, strlen(message_battery), 0xFFFF);
@@ -559,7 +559,7 @@ void StartInt_But(void const * argument)
 	for(;;)
 	{
 		vTaskSuspend(NULL);
-		if((xTaskGetTickCount() - lastRun) > 500)
+		if((xTaskGetTickCount() - lastRun) > 1000)
 		{
 			if(button_press == 0)
 			{
